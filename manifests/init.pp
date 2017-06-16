@@ -72,6 +72,10 @@
 #
 # $password_file_dir::    The location to store password files
 #
+# $other_default_ca_certs:: Certificates to be included with ours, Generally this would be
+#                           the Public CA certificates from the other nodes in a Katello cluster
+#                           type: string
+#
 # $default_ca_name::      The name of the default CA
 #
 # $server_ca_name::       The name of the server CA (used for https)
@@ -108,7 +112,8 @@ class certs (
   $group  = $certs::params::group,
 
   $default_ca_name = $certs::params::default_ca_name,
-  $server_ca_name  = $certs::params::server_ca_name
+  $server_ca_name  = $certs::params::server_ca_name,
+  $other_default_ca_certs = $::certs::params::other_default_ca_certs,
   ) inherits certs::params {
 
   if $server_cert {
@@ -151,6 +156,7 @@ class certs (
     generate      => $certs::generate,
     deploy        => $certs::deploy,
     password_file => $ca_key_password_file,
+    other_certs   => $other_default_ca_certs,
   }
 
   $default_ca = Ca[$default_ca_name]
